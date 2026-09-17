@@ -107,10 +107,12 @@ async function callGeminiTTS(env, { text, voiceName, apiKey, model }) {
   if (!key) throw new Error('no_api_key');
   const ttsModel = model || 'gemini-2.5-flash-preview-tts';
   const body = {
-    contents: [{ parts: [{ text }] }],
-    generationConfig: { responseModalities: ['AUDIO'] },
+  contents: [{ parts: [{ text }] }],
+  generationConfig: {
+    responseModalities: ['AUDIO'],
     speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voiceName || 'Kore' } } },
-  };
+  },
+};
   let lastErr = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
