@@ -12,7 +12,7 @@ const STEP1_HTML = `
 <div class="card-title">&#128221;&#65039; Short အချက်အလက် ဖြည့်ရန်</div>
 <p style="color:var(--text2);font-size:13px;margin-bottom:14px;">Short Video / Short Content ရေးသားရန် လိုအပ်သော အချက်အလက်များကို အောက်တွင် ဖြည့်ပါ — Generate နှိပ်လိုက်ရင် AI က Short Script ရေးပေးပါမယ်။</p>
 <div class="studio-form-grid">
-<div class="form-group" style="margin-bottom:0;">
+<div class="form-group aics-cms-type-field" style="margin-bottom:0;">
 <label>Short Type</label>
 <select id="shortTypeSel"></select>
 </div>
