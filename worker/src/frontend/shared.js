@@ -454,6 +454,12 @@ function aicsDesignPatchCss() {
     '.aics-work select{cursor:pointer;appearance:auto;}\n' +
     '.aics-work .studio-form-grid,.aics-work .adv-grid,.aics-work .vf-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px;}\n' +
     '.aics-work .studio-form-grid .form-group,.aics-work .adv-grid .form-group,.aics-work .vf-grid .form-group{min-width:0;}\n' +
+    '.aics-work .aics-cms-type-field{grid-column:1 / -1 !important;position:relative;padding:10px 12px 12px;border:1px solid rgba(0,229,255,.20);border-radius:14px;background:linear-gradient(135deg,rgba(0,229,255,.055),rgba(123,92,255,.075));box-shadow:0 8px 28px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.035);}\n' +
+    '.aics-work .aics-cms-type-field label{display:flex;align-items:center;gap:7px;margin-bottom:7px;font-weight:700;color:#dffcff;}\n' +
+    '.aics-work .aics-cms-type-field label:after{content:"CMS TYPE";font-size:9px;letter-spacing:.10em;padding:3px 6px;border-radius:999px;color:#dffcff;background:linear-gradient(90deg,rgba(0,229,255,.20),rgba(123,92,255,.22));border:1px solid rgba(0,229,255,.24);}\n' +
+    '.aics-work .aics-cms-type-field select{width:min(360px,100%);max-width:360px;min-height:42px;padding:9px 12px;border-radius:11px;background:linear-gradient(135deg,rgba(0,229,255,.13),rgba(123,92,255,.16));border:1px solid rgba(0,229,255,.42);color:#f2fbff;font-weight:700;box-shadow:0 0 0 1px rgba(123,92,255,.08),0 8px 24px rgba(0,229,255,.07);outline:none;}\n' +
+    '.aics-work .aics-cms-type-field select:hover{border-color:rgba(0,229,255,.72);background:linear-gradient(135deg,rgba(0,229,255,.18),rgba(123,92,255,.22));}\n' +
+    '.aics-work .aics-cms-type-field select:focus{border-color:rgba(0,229,255,.95);box-shadow:0 0 0 3px rgba(0,229,255,.13),0 8px 26px rgba(123,92,255,.10);}\n' +
     '.aics-work .aics-advanced-toggle{margin:4px 0 12px;background:rgba(123,92,255,.07);border-color:rgba(123,92,255,.28);color:#c7bbff;}\n' +
     '.aics-work .aics-advanced-toggle:hover{background:rgba(123,92,255,.13);border-color:rgba(123,92,255,.52);}\n' +
     '.aics-work .aics-adv-panel{padding:14px;background:rgba(8,14,28,.52);border:1px solid rgba(148,163,184,.12);border-radius:14px;margin-bottom:16px;}\n' +
@@ -474,6 +480,7 @@ function aicsDesignPatchCss() {
     '  .aics-app .aics-main{padding:12px 12px 24px;}\n' +
     '  .aics-work .card{padding:16px;border-radius:14px;}\n' +
     '  .aics-work .studio-form-grid,.aics-work .adv-grid,.aics-work .vf-grid,.aics-work .aics-out-cards,.aics-work .branch-action-grid{grid-template-columns:1fr;}\n' +
+    '  .aics-work .aics-cms-type-field select{width:min(100%,340px);max-width:340px;}\n' +
     '  .aics-work input:not([type=checkbox]):not([type=radio]),.aics-work textarea,.aics-work select{min-height:48px;}\n' +
     '  .aics-work textarea{min-height:104px;}\n' +
     '  .aics-work .btn-row{display:grid;grid-template-columns:1fr;gap:8px;}\n' +
