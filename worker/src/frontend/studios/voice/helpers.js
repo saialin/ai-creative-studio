@@ -28,8 +28,8 @@ function friendlyError(d,fallback){
 }
 function api(path,body){
   body=body||{};
-  // Dropdown ကို Voice (TTS) Model အတွက်သာ ရှိသည် — transcribe/SRT/translate တွင် Server က Default Model ကို ကိုယ်တိုင်ရွေးသည်
-  if(path.indexOf('/tts')>-1){var sel=document.getElementById('aiModelSel');if(sel&&sel.value)body.model=sel.value;}
+  var sel=document.getElementById((path.indexOf('/transcribe')>-1||path.indexOf('/srt')>-1)?'aiModelSel2':'aiModelSel')||document.getElementById('aiModelSel');
+  if(sel&&sel.value)body.model=sel.value;
   var h={'Content-Type':'application/json'};if(TOKEN)h.Authorization='Bearer '+TOKEN;
   return fetch(path,{method:'POST',headers:h,body:JSON.stringify(body)}).then(function(r){
     return r.json().catch(function(){return {error:'request_error'};}).then(function(d){if(!r.ok&&!d.error)d.error='request_error';return d;});
