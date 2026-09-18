@@ -347,6 +347,9 @@ function goAudioBranch(){
   var ata=document.getElementById('audioText');
   if(ata){ata.value=shopState.content.result;autoExpand(ata);}
   shopState.audio.input.text=shopState.content.result;
+        if(!shopState.audio.result || !shopState.audio.result.data){
+        shopState.audio.step=1;
+      }
   showBranchViews();
   setActionsForCurrent();
   autoSave();
