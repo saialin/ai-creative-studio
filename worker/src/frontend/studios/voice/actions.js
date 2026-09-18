@@ -43,7 +43,12 @@ function workflowTop(title){
   return '<div class="top-actions"><button class="btn ghost" onclick="goHome(false)">← Voice Studio Home</button><div style="color:var(--muted);font-size:12px;padding:9px 2px;">'+esc(title)+'</div></div>';
 }
 // ===== Sticky Action Bar (shared .aics-actions) — Voice Studio ၏ Screen တိုင်းအတွက် Action button များ =====
-function bReset(){return {label:'Reset',cls:'ghost',fn:studioReset};}
+function voiceReset(){
+  if(!confirm('ဤ Studio ရဲ့ အချက်အလက်အားလုံးကို ဖျက်ပြီး အစကပြန်စမလား?'))return;
+  try{localStorage.removeItem(voiceDraftKey);localStorage.removeItem('aics_draft_voice');localStorage.removeItem('aics_voice_transfer');}catch(e){}
+  location.reload();
+}
+function bReset(){return {label:'Reset',cls:'ghost',fn:voiceReset};}
 function setStickyActions(list){if(window.studioSetActions)studioSetActions(list);}
 function downloadVoiceAudio(){
   if(!LAST_AUDIO.url){toast('Download လုပ်ဖို့ Audio မရှိပါ','error');return;}
