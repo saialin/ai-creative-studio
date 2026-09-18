@@ -118,7 +118,7 @@ const STEP1_HTML = `
 <option value="Long">ရှည် (Long)</option>
 </select>
 </div>
-<div class="form-group">
+<div class="form-group aics-cms-type-field">
 <label for="generationLevelSel">Generation Level (ထုတ်လုပ်မှုအဆင့်)</label>
 <select id="generationLevelSel">
 <option value="1" selected>Basic</option>
@@ -320,7 +320,7 @@ const STEP12_HTML = `
 <label for="videoAdditionalInstructions">ထပ်မံညွှန်ကြားချက် (Additional Instructions)</label>
 <textarea id="videoAdditionalInstructions" placeholder="AI ကို ထပ်မံ ညွှန်ကြားလိုသည်များ..."></textarea>
 </div>
-<div class="form-group">
+<div class="form-group aics-cms-type-field">
 <label for="videoGenerationLevelSel">Generation Level (ထုတ်လုပ်မှုအဆင့်)</label>
 <select id="videoGenerationLevelSel">
 <option value="1" selected>Basic</option>
