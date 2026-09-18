@@ -17,7 +17,7 @@ const STEP1_HTML = `
 
 <div class="aics-section-label"><span class="aics-section-title">အခြေခံ သတ်မှတ်ချက်များ</span><span class="aics-section-sub">Essential Settings</span></div>
 <div class="studio-form-grid">
-<div class="form-group">
+<div class="form-group aics-cms-type-field">
 <label for="storyTypeSel">ဇာတ်လမ်းအမျိုးအစား (Story Type)</label>
 <select id="storyTypeSel" onchange="selectedStoryType=this.value;">
 <option value="1" selected>ဇာတ်လမ်း (Free)</option>
@@ -115,7 +115,7 @@ const STEP4_HTML = `
 
 <div class="aics-section-label"><span class="aics-section-title">ဗီဒီယို သတ်မှတ်ချက်များ</span><span class="aics-section-sub">Video Settings</span></div>
 <div class="vf-grid">
-<div class="form-group"><label for="vidTypeSel">Video အမျိုးအစား (Video Type)</label><select id="vidTypeSel"></select></div>
+<div class="form-group aics-cms-type-field"><label for="vidTypeSel">Video အမျိုးအစား (Video Type)</label><select id="vidTypeSel"></select></div>
 <div class="form-group"><label for="vidDurationSel">Video ကြာချိန် (Video Duration)</label><select id="vidDurationSel"></select></div>
 <div class="form-group"><label for="vidSceneSel">Scene ကြာချိန် (Scene Duration)</label><select id="vidSceneSel"></select></div>
 <div class="form-group"><label for="vidRatioSel">ပုံရိပ်အချိုး (Aspect Ratio)</label><select id="vidRatioSel"></select></div>
