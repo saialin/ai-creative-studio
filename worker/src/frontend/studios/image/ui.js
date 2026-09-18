@@ -12,7 +12,7 @@ const STEP1_HTML = `
 <div class="card-title">&#127912; Image ဖန်တီးရန် အချက်အလက်</div>
 <p style="color:var(--text2);font-size:13px;margin-bottom:14px;">Type ရွေးပြီး ပုံအကြောင်း အပြည့်အစုံ ဖော်ပြပါ — AI က သင့်အတွက် Image Prompt ပြင်ဆင်ပေးပါမယ်။</p>
 <div class="studio-form-grid">
-<div class="form-group" style="margin-bottom:0;">
+<div class="form-group aics-cms-type-field" style="margin-bottom:0;">
 <label>ဓာတ်ပုံ အမျိုးအစား</label>
 <select id="imgTypeSel" onchange="selectedImageType=this.value;">
 <option value="1" selected>💡 Idea To Image (Free)</option>
