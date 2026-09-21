@@ -1,14 +1,11 @@
 // AI Creative Studio — Content Studio / constants.js (V2 refactor)
 // Browser-side constants — extracted VERBATIM from frontend/content.js (v1, byte-identical slice).
 // The whole <script> is reassembled in page.js in the original source order.
-export const CONSTANTS_SCRIPT = `// ===== Linear Workflow State Machine (Pilot — shared workflow layer) =====
-// UX: INPUT → GENERATE → RESULT → REVIEW → FINAL (single linear stepper).
-// Branch Stepper မရှိ — Video/Audio တို့သည် Result Stage ၏ panel များသာ ဖြစ်သည်။
-// CS_STEPS.video/audio (12/14/22/24) ကို draft migration အတွက်သာ ထိန်းထားသည် — stepper တွင် မပြတော့ပါ။
-var CS_MODE = 'main'; // legacy — draft migration အတွက်သာ (main)
+export const CONSTANTS_SCRIPT = `// ===== Branch Stepper State Machine (Content.js တွင်သာ — shared.js မပြောင်းပါ) =====
+// Main Stepper နှင့် Branch Stepper ကို State အရ သီးခြားထိန်းချုပ်သည် (Section 12)
+var CS_MODE = 'main'; // 'main' | 'video' | 'audio'
 var csCur = 1;
 var csDone = {};
-var csResultView = 'content'; // 'content' | 'video' | 'audio' — Result Stage အတွင်းရှိ panel
 var CS_STEPS = {
   main:  [
     { n: 1,  label: '01 အကြောင်းအရာ' },

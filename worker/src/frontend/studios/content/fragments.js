@@ -6,7 +6,7 @@ import { STEP3_HTML } from './ui.js';
 import { STEP12_HTML } from './ui.js';
 import { STEP14_HTML } from './ui.js';import { aicsResultLoadingHtml } from '../../shared.js';
 const STEP22_HTML = `
-<div class="aics-step" data-step="2" id="audioSetupBlock">
+<div class="aics-step" data-step="22">
 <div class="card">
 <div class="card-title">&#128266; Audio ပြင်ဆင်ရန် (Audio Setup)</div>
 <div class="aics-transfer-note">&#10003; Content Result ကို အလိုအလျောက် ထည့်ထားသည်</div>
@@ -93,14 +93,14 @@ const STEP22_HTML = `
 </div>`;
 
 const STEP24_HTML = `
-<div class="aics-step" data-step="2" id="audioResultBlock">
+<div class="aics-step" data-step="24">
 <div class="card">
 <div class="card-title">&#128266; Audio ရလဒ်</div>
 ${aicsResultLoadingHtml('audioLoading','AI က သင့်အတွက် အသံကို ပြင်ဆင်နေသည်...')}
 <div class="audio-container" id="audioContainer"></div>
 <div class="error-box" id="voiceError2"></div>
 <div class="btn-row" id="voiceRetryRow" style="display:none;justify-content:center;">
-<button class="btn btn-secondary" onclick="showAudioSetupPhase()">&#8592; ပြန်ပြင်ရန်</button>
+<button class="btn btn-secondary" onclick="csNav(22)">&#8592; ပြန်ပြင်ရန်</button>
 <button class="btn btn-primary" onclick="generateVoice()">&#128260; ပြန်လည်ကြိုးစားရန်</button>
 </div>
 <div class="btn-row">
@@ -142,10 +142,6 @@ ${aicsResultLoadingHtml('audioLoading','AI က သင့်အတွက် အ�
 </div>
 </div>`;
 
-// Linear Workflow (Pilot): Video/Audio များကို Branch Stepper မဟုတ်ဘဲ
-// Result Stage (step 2) အတွင်းရှိ panel များအဖြစ် ပေါင်းထည့်သည်။
-const STEPS_HTML = STEP1_HTML + STEP3_HTML +
-  '<div class="aics-step" data-step="2" id="panelVideo" style="display:none;">' + STEP12_HTML + STEP14_HTML + '</div>' +
-  '<div class="aics-step" data-step="2" id="panelAudio" style="display:none;">' + STEP22_HTML + STEP24_HTML + '</div>';
+const STEPS_HTML = STEP1_HTML + STEP3_HTML + STEP12_HTML + STEP14_HTML + STEP22_HTML + STEP24_HTML;
 
 export { STEPS_HTML };

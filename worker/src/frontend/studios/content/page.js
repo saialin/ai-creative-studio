@@ -2,7 +2,6 @@
 // Final HTML composition — head/CSS/body from content.js (v1) + browser <script> assembled
 // from the segment modules in the ORIGINAL source order. Byte-identical output vs v1.
 import { renderSidebar, sidebarScript, renderStudioShell, aicsResultLoadingHtml } from '../../shared.js';
-import { WORKFLOW_SCRIPT } from '../../shared-workflow.js';
 import { STEPS } from './ui.js';
 import { STEPS_HTML } from './fragments.js';
 import { STATE_SCRIPT } from './state.js';
@@ -155,7 +154,7 @@ ${sidebarScript()}
   .aics-work .aics-out-hub .aics-out-desc{display:none;}
 }
 </style>
-<script>${STATE_SCRIPT}${CONSTANTS_SCRIPT}${WORKFLOW_SCRIPT}${HELPERS_SCRIPT}${API_SCRIPT}${AUDIO_SCRIPT}${SHELL_SCRIPT}</script>
+<script>${STATE_SCRIPT}${CONSTANTS_SCRIPT}${HELPERS_SCRIPT}${API_SCRIPT}${AUDIO_SCRIPT}${SHELL_SCRIPT}</script>
 </body>
 </html>`;
 

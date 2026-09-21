@@ -211,10 +211,10 @@ function generateVideo(){
   csBusy=true;
   setGenButtonsDisabled(true);
   csMarkDone(12);
-  // Unified: Video Result section အတွင်း loading ပြသည် — Result panel (step 2) တွင် နေသည်
+  // Unified: Video Result section အတွင်း loading ပြသည်
   if(window.aicsResultLoading)window.aicsResultLoading.show('videoLoading','AI က သင့်အတွက် Video ကို ပြင်ဆင်နေသည်...',content);
   var vrc=document.getElementById('videoResult');if(vrc)vrc.style.display='none';
-  showVideoResultPhase();
+  csGoForce(14);
   setLoading('videoGenLoading',true);
   var body={idea:idea,generationLevel:generationLevel,contentType:contentType};
   if(byok)body.apiKey=byok;
@@ -229,7 +229,7 @@ function generateVideo(){
       csMarkDone(12);
       csMarkDone(14);
       showToastMsg('&#10004; Video Plan ပြီးပါပြီ');
-      showVideoResultPhase();
+      csGoForce(14);
     })
     .catch(function(err){
       console.error(err);
