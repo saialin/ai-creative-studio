@@ -54,10 +54,10 @@ function generateVoice(){
   csBusy=true;
   setGenButtonsDisabled(true);
   csMarkDone(22);
-  // Unified: Audio Result section အတွင်း loading ပြသည်
+  // Unified: Audio Result section အတွင်း loading ပြသည် — Result panel (step 2) တွင် နေသည်
   if(window.aicsResultLoading)window.aicsResultLoading.show('audioLoading','AI က သင့်အတွက် အသံကို ပြင်ဆင်နေသည်...',text);
   var ac=document.getElementById('audioContainer');if(ac)ac.innerHTML='';
-  csGoForce(24);
+  showAudioResultPhase();
   setLoading('voiceGenLoading',true);
   document.getElementById('voiceBtn').disabled=true;
   var gl=(document.getElementById('generationLevelSel')||{}).value||'1';
@@ -77,7 +77,7 @@ function generateVoice(){
       csMarkDone(22);
       csMarkDone(24);
       showToastMsg('&#10004; အသံပြီးပါပြီ');
-      csGoForce(24);
+      showAudioResultPhase();
     })
     .catch(function(err){
       console.error(err);

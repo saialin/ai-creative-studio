@@ -145,7 +145,7 @@ const STEP1_HTML = `
 // Primary Actions: Video / Audio | Secondary: ပြန်ပြင်ရန် / Copy / သိမ်းရန်
 // ============================================================
 const STEP3_HTML = `
-<div class="aics-step" data-step="2">
+<div class="aics-step" data-step="2" id="panelContent">
 <div class="card">
 <div class="card-title">&#128221; Content ရလဒ် (Result)</div>
 ${aicsResultLoadingHtml('contentLoading','AI ရေးသားနေသည်')}
@@ -166,12 +166,11 @@ ${aicsResultLoadingHtml('contentLoading','AI ရေးသားနေသည်')
 </div>
 </div>
 </div>
-<div class="btn-row" id="resultActionsRow" style="display:none;margin-top:14px;">
-<button class="btn btn-primary" onclick="openBranch('video')">&#127916; Video ဆက်ဖန်တီးရန်</button>
-<button class="btn btn-secondary" onclick="openBranch('audio')">&#128266; အသံ ဆက်ဖန်တီးရန်</button>
-<button class="btn-ghost" onclick="scrollToRevise()">&#9998; ပြန်ပြင်ရန်</button>
+<div class="btn-row" id="resultActionsRow" style="display:none;margin-top:14px;align-items:center;">
+<button class="btn btn-secondary" onclick="csNav(1)">&#8592; Edit</button>
+<button class="btn btn-secondary" onclick="generateContent()">&#8635; Regenerate</button>
+<button class="btn btn-primary" onclick="saveContentResult()">Continue &#8594;</button>
 <button class="btn-ghost" onclick="copyAllResult()">&#128203; Copy</button>
-<button class="btn btn-purple" onclick="saveContentResult()">&#128190; သိမ်းရန်</button>
 </div>
 <div class="error-box" id="genError2"></div>
 <div class="btn-row" id="genRetryRow" style="display:none;justify-content:center;">
@@ -180,7 +179,7 @@ ${aicsResultLoadingHtml('contentLoading','AI ရေးသားနေသည်')
 </div>
 </div>
 </div>
-<div class="aics-step" data-step="2b">
+<div class="aics-step" data-step="2b" id="panelContentEdit">
 <div class="card">
 <div class="card-title">&#128172; Edit — Quick Actions</div>
 <p class="form-help" style="margin-bottom:12px;">လိုချင်တဲ့ ပြင်ဆင်မှုကို တစ်ချက်နှိပ်ရုံဖြင့် AI က ပြင်ပေးပါမယ် — သို့မဟုတ် အောက်မှာ ကိုယ်တိုင် ညွှန်ကြားချက် ရေးနိုင်ပါတယ်။</p>
@@ -196,9 +195,9 @@ ${aicsResultLoadingHtml('contentLoading','AI ရေးသားနေသည်')
 </div>
 </div>
 </div>
-<div class="aics-step" data-step="2c">
+<div class="aics-step" data-step="2c" id="panelContentHub">
 <div class="aics-out-hub">
-<div class="aics-out-hub-title">&#128640; ဆက်လက်ဖန်တီးရန်</div>
+<div class="aics-out-hub-title">&#128640; Create From This Result</div>
 <p class="aics-out-hub-sub">သင့် Content ကို နောက်ထပ် Output အဖြစ် ဆက်လက်ဖန်တီးနိုင်ပါသည် — တစ်ခုချင်း သီးသန့် ရွေးနိုင်ပြီး ပြီးတိုင်း ဤနေရာသို့ ပြန်လာနိုင်ပါသည်။</p>
 <div class="aics-out-cards">
 <div class="aics-out-card">
@@ -213,6 +212,12 @@ ${aicsResultLoadingHtml('contentLoading','AI ရေးသားနေသည်')
 <div class="aics-out-desc">Content &#8594; Audio</div>
 <button class="btn btn-secondary aics-out-btn" onclick="openBranch('audio')">&#128266; ဆက်ဖန်တီးရန်</button>
 </div>
+<div class="aics-out-card">
+<div class="aics-out-icon">&#127908;</div>
+<div class="aics-out-title">Voice Studio</div>
+<div class="aics-out-desc">Content &#8594; Text-to-Speech (သီးခြား Studio)</div>
+<button class="btn btn-ghost aics-out-btn" onclick="sendToVoice()">&#127908; Voice သို့ ပို့မည်</button>
+</div>
 </div>
 </div>
 </div>`;
@@ -223,7 +228,7 @@ ${aicsResultLoadingHtml('contentLoading','AI ရေးသားနေသည်')
 // Advanced Accordion: Scene Settings / Visual Settings / Reference / Additional Instructions
 // ============================================================
 const STEP12_HTML = `
-<div class="aics-step" data-step="12">
+<div class="aics-step" data-step="2" id="videoSetupBlock">
 <div class="card">
 <div class="card-title">&#127916; Video ပြင်ဆင်ရန် (Video Setup)</div>
 <div class="aics-transfer-note">&#10003; Content Result ကို အလိုအလျောက် ထည့်ထားသည်</div>
@@ -338,7 +343,7 @@ const STEP12_HTML = `
 </div>`;
 
 const STEP14_HTML = `
-<div class="aics-step" data-step="14">
+<div class="aics-step" data-step="2" id="videoResultBlock">
 <div class="card">
 <div class="card-title">&#127916; Video ရလဒ်</div>
 ${aicsResultLoadingHtml('videoLoading','AI က သင့်အတွက် Video ကို ပြင်ဆင်နေသည်...')}
@@ -354,7 +359,7 @@ ${aicsResultLoadingHtml('videoLoading','AI က သင့်အတွက် Video
 </div>
 <div class="error-box" id="videoError2"></div>
 <div class="btn-row" id="videoRetryRow" style="display:none;justify-content:center;">
-<button class="btn btn-secondary" onclick="csNav(12)">&#8592; ပြန်ပြင်ရန်</button>
+<button class="btn btn-secondary" onclick="showVideoSetupPhase()">&#8592; ပြန်ပြင်ရန်</button>
 <button class="btn btn-primary" onclick="generateVideo()">&#128260; ပြန်လည်ကြိုးစားရန်</button>
 </div>
 <div class="btn-row">

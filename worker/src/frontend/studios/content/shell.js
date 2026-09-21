@@ -2,9 +2,9 @@
 // Browser-side shell — extracted VERBATIM from frontend/content.js (v1, byte-identical slice).
 // The whole <script> is reassembled in page.js in the original source order.
 export const SHELL_SCRIPT = `// ===== Studio Shell Hooks =====
-// Stepper = Main + Branch — MAP (System တစ်ခုလုံး) ကို UI တွင် မပြပါ
+// Stepper = Linear (1 Input → 2 Result) — Branch Stepper မရှိ။
+// Video/Audio တို့သည် Result Stage ၏ panel များသာ ဖြစ်သည်။
 function studioOnStep(n){
-  var backHub={label:'&#8592; Content ရလဒ်သို့ ပြန်ရန်',cls:'ghost',fn:backToContentResult};
   if(n===1){
     var acts=[{label:'Reset',cls:'ghost',fn:studioReset}];
     if(lastResult)acts.push({label:'Next &#8594;',cls:'secondary',fn:function(){csNav(2);}});
@@ -12,12 +12,6 @@ function studioOnStep(n){
     studioSetActions(acts);
   }else if(n===2){
     studioSetActions([{label:'Reset',cls:'ghost',fn:studioReset},{label:'&#128203; Copy',cls:'ghost',fn:copyAllResult},{label:'&#128190; ဖန်တီးမှုသိမ်းပါ',cls:'purple',fn:saveContentResult}]);
-  }else if(n===12){
-    studioSetActions([backHub]);
-  }else if(n===22){
-    studioSetActions([backHub]);
-  }else if(n===14||n===24){
-    studioSetActions([backHub,{label:'&#128190; ဖန်တီးမှုသိမ်းပါ',cls:'purple',fn:saveContentResult}]);
   }
 }
 window.studioOnStep=studioOnStep;
@@ -155,20 +149,22 @@ function studioRestoreDraft(d){
     var ap=document.getElementById('audioContentPreview');
     if(ap&&audioState.content)ap.textContent=audioState.content;
   }
-  if(d.mode&&CS_STEPS[d.mode]){
-    CS_MODE=d.mode;
-  }
+  if(d.mode)csSetMode(d.mode); // legacy — result view (content|video|audio) သို့ map
   csRenderStepper();
-  var target=d.csCur||1;
-  var m=csMeta(target);
-  if(!m||m.lock||!csAllowed(target)){
-    var steps=csModeSteps();
-    target=steps[steps.length-1].n;
-    if(csMeta(target).lock)target=steps[steps.length-2].n;
-    if(!csAllowed(target))target=1;
-  }
+  // Legacy branch draft migration:
+  //   csCur 12/14 (video branch) → Result step (2) + panel video
+  //   csCur 22/24 (audio branch) → Result step (2) + panel audio
+  var target=1;
+  var oldCur=parseInt(d.csCur,10)||1;
+  if(oldCur===12||oldCur===14){ csResultView='video'; target=2; }
+  else if(oldCur===22||oldCur===24){ csResultView='audio'; target=2; }
+  else { target=(oldCur===2)?2:1; }
   csCur=target;
   csShow(target);
+  if(target===2){
+    if(csResultView==='video'){ if(videoPlan)showVideoResultPhase(); else showVideoSetupPhase(); }
+    else if(csResultView==='audio'){ if(currentAudioBase64)showAudioResultPhase(); else showAudioSetupPhase(); }
+  }
 }
 window.studioRestoreDraft=studioRestoreDraft;
 

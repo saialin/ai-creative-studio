@@ -48,34 +48,24 @@ function csShow(n){
     else if(n===2&&(ds==='2b'||ds==='2c'))match=true; // Content Result ၃ ပိုင်း (Result / Edit / Output Hub) အတူတူပြရန်
     steps[i].classList.toggle('active',match);
   }
+  if(n===2)showResultView(csResultView); // Linear — Result Stage အတွင်းရှိ panel ကို ပြသည်
   var w=document.getElementById('aicsWork'); if(w)w.scrollTop=0;
   csUpdateStepper();
   if(window.studioOnStep){ try{ window.studioOnStep(n); }catch(e){} }
 }
 
-// ===== Main Stepper + Branch Stepper (Section 12 — State အလိုက် သီးခြား ထိန်းချုပ်) =====
-// Main Stepper ကို မဖျောက် — Branch ဝင်လျှင် Branch Stepper ကို ထပ်မံ ပြသည်
-function csEnsureBranchStepper(){
-  var main=document.getElementById('aicsStepper');
-  if(!main)return null;
-  var bs=document.getElementById('aicsBranchStepper');
-  if(!bs){
-    bs=document.createElement('div');
-    bs.className='aics-stepper aics-branch-stepper';
-    bs.id='aicsBranchStepper';
-    main.insertAdjacentElement('afterend',bs);
-  }
-  return bs;
-}
+// ===== Linear Workflow Stepper (Pilot — shared workflow layer) =====
+// UX: INPUT → GENERATE → RESULT → REVIEW → FINAL — Stepper သည် 1 → 2 သာ။
+// Video/Audio တို့ကို Branch Stepper အဖြစ် မပြတော့ဘဲ Result Stage ၏ panel များအဖြစ် ပြသည်။
 function csStepHtml(s,index){
   var label=((index+1<10)?'0':'')+(index+1)+' '+String(s.label).replace(/^\\d+\\s*/,'');
   return '<button class="aics-step-btn" data-step="'+s.n+'" onclick="csNav('+s.n+')">'+
     '<span class="aics-step-txt"><span class="aics-step-label">'+label+'</span></span>'+
     '<span class="aics-step-loading"><span class="aics-step-spinner"></span>'+(s.loading||'ဖန်တီးနေသည်...')+'</span></button>';
 }
-function csRenderMainStepper(){
+function csRenderStepper(){
   var c=document.getElementById('aicsStepper'); if(!c)return;
-  var steps=CS_STEPS.main;
+  var steps=CS_STEPS.main; // Main steps သာ — Branch steps မပြတော့
   var html='<div class="aics-stepper-inner">';
   for(var i=0;i<steps.length;i++){
     html+=csStepHtml(steps[i],i);
@@ -83,27 +73,10 @@ function csRenderMainStepper(){
   }
   html+='</div>';
   c.innerHTML=html;
+  var bs=document.getElementById('aicsBranchStepper');
+  if(bs){bs.style.display='none';bs.innerHTML='';} // Legacy branch bar — မပြတော့
+  csUpdateStepper();
 }
-function csRenderBranchStepper(){
-  var bs=csEnsureBranchStepper();
-  if(!bs)return;
-  if(CS_MODE==='main'||!CS_STEPS[CS_MODE]){
-    bs.style.display='none';
-    bs.innerHTML='';
-    return;
-  }
-  bs.style.display='';
-  var steps=CS_STEPS[CS_MODE];
-  var cap=(CS_MODE==='video')?'&#127916; Video Branch':'&#128266; Audio Branch';
-  var html='<span class="aics-branch-cap">'+cap+'</span><div class="aics-stepper-inner">';
-  for(var i=0;i<steps.length;i++){
-    html+=csStepHtml(steps[i],i);
-    if(i<steps.length-1)html+='<span class="aics-step-link"></span>';
-  }
-  html+='</div>';
-  bs.innerHTML=html;
-}
-function csRenderStepper(){ csRenderMainStepper(); csRenderBranchStepper(); csUpdateStepper(); }
 function csUpdateStepper(){
   var btns=document.querySelectorAll('.aics-step-btn');
   for(var i=0;i<btns.length;i++){
@@ -116,7 +89,43 @@ function csUpdateStepper(){
   }
   if(window.studioScrollActiveStep)window.studioScrollActiveStep(true);
 }
-function csSetMode(mode){ CS_MODE=mode; csRenderStepper(); }
+// Legacy compat — draft migration အတွက်သာ (branch step navigation မရှိတော့)
+function csSetMode(mode){
+  if(mode==='video')csResultView='video';
+  else if(mode==='audio')csResultView='audio';
+  else csResultView='content';
+}
+
+// ===== Result Stage Panels (Branch Stepper အစား — Result အတွင်းမှ panel များ) =====
+function showResultView(v){
+  csResultView=(v==='video'||v==='audio')?v:'content';
+  var pc=document.getElementById('panelContent');
+  var pe=document.getElementById('panelContentEdit');
+  var ph=document.getElementById('panelContentHub');
+  var pv=document.getElementById('panelVideo');
+  var pa=document.getElementById('panelAudio');
+  if(pc)pc.style.display=(csResultView==='content')?'':'none';
+  if(pe)pe.style.display=(csResultView==='content')?'':'none';
+  if(ph)ph.style.display=(csResultView==='content')?'':'none';
+  if(pv)pv.style.display=(csResultView==='video')?'':'none';
+  if(pa)pa.style.display=(csResultView==='audio')?'':'none';
+}
+function showVideoSetupPhase(){
+  var s=document.getElementById('videoSetupBlock'); if(s)s.style.display='';
+  var r=document.getElementById('videoResultBlock'); if(r)r.style.display='none';
+}
+function showVideoResultPhase(){
+  var s=document.getElementById('videoSetupBlock'); if(s)s.style.display='none';
+  var r=document.getElementById('videoResultBlock'); if(r)r.style.display='';
+}
+function showAudioSetupPhase(){
+  var s=document.getElementById('audioSetupBlock'); if(s)s.style.display='';
+  var r=document.getElementById('audioResultBlock'); if(r)r.style.display='none';
+}
+function showAudioResultPhase(){
+  var s=document.getElementById('audioSetupBlock'); if(s)s.style.display='none';
+  var r=document.getElementById('audioResultBlock'); if(r)r.style.display='';
+}
 
 // ===== Output Hub — Branch ဖွင့်ခြင်း (Auto-Transfer — Section 11 / 14) =====
 function getEditedContent(){
@@ -133,22 +142,38 @@ function openBranch(kind){
     videoState.content=content;
     var vt=document.getElementById('videoContentText'); if(vt){vt.value=content;autoGrow(vt);}
     var vp=document.getElementById('videoContentPreview'); if(vp){vp.textContent=content;vp.style.display='';}
-    csSetMode('video');
-    csGoForce(12);
+    showResultView('video');
+    if(videoPlan)showVideoResultPhase(); else showVideoSetupPhase();
   }else if(kind==='audio'){
-    // Content Studio ၏ ကိုယ်ပိုင် Audio Branch (Step 22→24) သို့ သွားသည် —
-    // Voice Studio ကို ပြောင်းမသွားတော့ဘဲ ဤ Studio ထဲမှာပဲ ဆက်လုပ်သည်။
+    // Audio ကို Content Studio အတွင်းမှာပဲ Result panel အဖြစ် ဆက်လုပ်သည် —
     // Copy/paste မလိုအပ် — နောက်ဆုံး edit လုပ်ထားသော Content ကို Auto-fill လုပ်သည်။
     audioState.content=content;
     var ap=document.getElementById('audioContentPreview'); if(ap){ap.textContent=content;ap.style.display='';}
     var tt=document.getElementById('ttsText'); if(tt){tt.value=content;autoGrow(tt);}
-    csSetMode('audio');
-    csGoForce(22);
+    showResultView('audio');
+    if(currentAudioBase64)showAudioResultPhase(); else showAudioSetupPhase();
   }
+  csGoForce(2); // Stepper သည် Result step (2) တွင် ရှိနေသည် — branch step မရှိ
 }
 function backToContentResult(){
-  csSetMode('main');
+  showResultView('content');
   if(csDone[2]){ csGoForce(2); } else { csGoForce(1); }
+}
+// ===== Cross-Studio Handoff (Explicit Contract — shared-workflow.js) =====
+// Content → Voice: aicsTransfer.write('voice', contract) — Voice Studio သည်
+// ဤ contract ကို ဖတ်၍ TTS input auto-fill လုပ်ပါမည် (producer side fix)
+function sendToVoice(){
+  if(!lastResult||!lastResult.content){ showToastMsg('အရင် Content ကို ဖန်တီးပါ'); return; }
+  var content=getEditedContent();
+  var ok=window.aicsTransfer&&window.aicsTransfer.write('voice',{
+    source:'content',
+    sourceType:'text',
+    payload:{text:content, speakingStyle:lastResult.speakingStyle||'', voiceStyle:lastResult.voiceStyle||''},
+    metadata:{}
+  });
+  if(!ok){ showToastMsg('Voice သို့ ပို့၍ မရပါ — ထပ်စမ်းပါ'); return; }
+  showToastMsg('✓ Voice Studio သို့ ပို့လိုက်ပါပြီ');
+  setTimeout(function(){ try{ location.href='/app/voice'; }catch(e){} }, 600);
 }
 function scrollToRevise(){
   var el=document.getElementById('feedbackInput');
