@@ -1187,6 +1187,7 @@ export default {
           if (!apiKey) apiKey = await getUserApiKey(env, payload.sub);
           const out = await generateVoiceSrt(env, { model: body.model, 
             audioBase64: body.audioBase64,
+            knownText: typeof body.knownText === 'string' ? body.knownText : '',
             mimeType: body.mimeType || 'audio/mpeg',
             type: String(body.type || '2'), plan, apiKey,
           });
