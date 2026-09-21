@@ -24,9 +24,19 @@ async function callGeminiText(env, { model, system, prompt, apiKey }) {
         break;
       }
       const parts = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
-      return parts ? parts.map(p => p.text || '').join('').trim() : '';
+      const outText = (parts || []).map(p => p.text || '').join('').trim();
+      const finishReason = data.candidates && data.candidates[0] && data.candidates[0].finishReason;
+      const blockReason = data.promptFeedback && data.promptFeedback.blockReason;
+      if (!outText) {
+        const err = new Error('gemini_empty_response' + (finishReason ? ' finishReason=' + finishReason : '') + (blockReason ? ' blockReason=' + blockReason : ''));
+        err.noRetry = true;
+        try { console.error('[AICS] gemini empty response', JSON.stringify({ model, finishReason, blockReason, modelVersion: data.modelVersion, usage: data.usageMetadata })); } catch (_) {}
+        throw err;
+      }
+      return outText;
     } catch (e) {
       lastErr = e;
+      if (e && e.noRetry) break;
       await new Promise(r => setTimeout(r, 800));
     }
   }
@@ -91,9 +101,19 @@ async function callGeminiMultimodal(env, { model, prompt, images, apiKey }) {
         break;
       }
       const outParts = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
-      return outParts ? outParts.map(p => p.text || '').join('').trim() : '';
+      const outText = (outParts || []).map(p => p.text || '').join('').trim();
+      const finishReason = data.candidates && data.candidates[0] && data.candidates[0].finishReason;
+      const blockReason = data.promptFeedback && data.promptFeedback.blockReason;
+      if (!outText) {
+        const err = new Error('gemini_empty_response' + (finishReason ? ' finishReason=' + finishReason : '') + (blockReason ? ' blockReason=' + blockReason : ''));
+        err.noRetry = true;
+        try { console.error('[AICS] gemini empty response', JSON.stringify({ model, finishReason, blockReason, modelVersion: data.modelVersion, usage: data.usageMetadata })); } catch (_) {}
+        throw err;
+      }
+      return outText;
     } catch (e) {
       lastErr = e;
+      if (e && e.noRetry) break;
       await new Promise(r => setTimeout(r, 800));
     }
   }
