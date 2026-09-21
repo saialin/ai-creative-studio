@@ -234,6 +234,7 @@ function vRunTranscribe(){
     if(rid!==VOICE_REQUEST_ID)return;
     hideLoading();
     if(d.error)throw new Error(d.error+'|'+(d.detail||''));
+    if(!d.text||!String(d.text).trim())throw new Error('empty_transcription|စာသားရလဒ် ဗလာဖြစ်နေပါသည်');
     VOICE_STATE.voiceResult={text:d.text||''};VOICE_STATE.srtResult=null;VOICE_STATE.translationResult=null;translatedSrt='';
     vRenderResult('text');toast('✓ စာသားဖန်တီးပြီးပါပြီ','success');saveDraft();
   }).catch(function(e){if(rid===VOICE_REQUEST_ID){hideLoading();vFail('text',e);}});
@@ -250,6 +251,7 @@ function vRunSrt(source){
     if(rid!==VOICE_REQUEST_ID)return;
     hideLoading();
     if(d.error)throw new Error(d.error+'|'+(d.detail||''));
+    if(!d.srt||!String(d.srt).trim())throw new Error('empty_transcription|SRT ရလဒ် ဗလာဖြစ်နေပါသည်');
     VOICE_STATE.srtResult=d.srt||'';VOICE_STATE.translationResult=null;translatedSrt='';
     vRenderResult('srt');toast('✓ SRT ပြီးပါပြီ','success');saveDraft();
   }).catch(function(e){if(rid===VOICE_REQUEST_ID){hideLoading();vFail('srt',e);}});
