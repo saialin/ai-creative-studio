@@ -133,3 +133,76 @@ function aicsAutoExpand(el) {
 // Note: apiCall is intentionally NOT centralised here — each studio talks to a
 // different endpoint set and has bespoke error handling. Studio isolation rule
 // (rule 6) keeps API logic inside each studio package's api/helpers modules.
+
+// ---------------------------------------------------------------------------
+// Result Hub — V2.1 Unified Workflow Hub (ADDITIVE; no existing export changed)
+// Shared "step 4" component: progress chain + result body + toolbar + "continue
+// with this result" cards. A studio passes plain data; the component only builds
+// HTML. Callbacks are registered per render (window.aicsHubRun(index)).
+//
+//   aicsResultHub({
+//     pipeline: [{ label, done, current }],       // e.g. Audio ✓ → SRT → Translate
+//     body:     '<html>',                          // the result itself (audio, textarea…)
+//     tools:    [{ label, fn }],                   // Copy / Save / Retry …
+//     afterHtml:'<html>',                          // optional options placed above the next-cards
+//     nextTitle:'Continue with this result',
+//     next:     [{ icon, label, desc, locked, fn }]
+//   })  ->  HTML string
+// ---------------------------------------------------------------------------
+export const AICS_RESULT_HUB_CSS = `
+.aics-work .aics-hub-pipe{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 12px;font-size:12px}
+.aics-work .aics-hub-pill{padding:3px 10px;border-radius:999px;border:1px solid var(--border,rgba(0,229,255,.15));color:var(--muted,#8b95a8);background:var(--card2,#111a2e)}
+.aics-work .aics-hub-pill.done{color:var(--success,#00e676);border-color:rgba(0,230,118,.3);background:rgba(0,230,118,.08)}
+.aics-work .aics-hub-pill.current{border-color:rgba(123,92,255,.6);color:#fff}
+.aics-work .aics-hub-arrow{color:var(--muted,#8b95a8)}
+.aics-work .aics-hub-tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.aics-work .aics-hub-tool{appearance:none;min-height:40px;padding:8px 13px;border-radius:9px;border:1px solid var(--border,rgba(0,229,255,.15));background:var(--card2,#111a2e);color:var(--text,#e8ecf4);font-size:13px;font-weight:600;cursor:pointer}
+.aics-work .aics-hub-tool:hover{border-color:var(--cyan,#00e5ff)}
+.aics-work .aics-hub-title{font-weight:700;color:var(--cyan,#00e5ff);margin:16px 0 8px;font-size:13px}
+.aics-work .aics-hub-next-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.aics-work .aics-hub-next{appearance:none;text-align:left;display:flex;flex-direction:column;gap:3px;padding:13px;border-radius:12px;border:1px solid var(--border,rgba(0,229,255,.15));background:var(--card2,#111a2e);color:var(--text,#e8ecf4);cursor:pointer;min-height:64px}
+.aics-work .aics-hub-next:hover{border-color:var(--cyan,#00e5ff)}
+.aics-work .aics-hub-next b{font-size:14px}
+.aics-work .aics-hub-next span{font-size:12px;color:var(--muted,#8b95a8)}
+.aics-work .aics-hub-lock{font-size:11px;color:var(--warn,#ffc107)}
+@media(max-width:700px){.aics-work .aics-hub-next-grid{grid-template-columns:1fr}}
+`;
+
+export const AICS_RESULT_HUB_SCRIPT = `
+var __aicsHubCbs = [];
+function aicsHubEsc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function aicsHubRun(i) { var f = __aicsHubCbs[i]; if (typeof f === 'function') f(); }
+function aicsResultHub(o) {
+  o = o || {};
+  __aicsHubCbs = [];
+  function reg(fn) { __aicsHubCbs.push(fn); return __aicsHubCbs.length - 1; }
+  var h = '';
+  if (o.pipeline && o.pipeline.length) {
+    h += '<div class="aics-hub-pipe">';
+    o.pipeline.forEach(function (p, i) {
+      if (i) h += '<span class="aics-hub-arrow">→</span>';
+      h += '<span class="aics-hub-pill' + (p.done ? ' done' : '') + (p.current ? ' current' : '') + '">' + (p.done ? '✓ ' : '') + aicsHubEsc(p.label) + '</span>';
+    });
+    h += '</div>';
+  }
+  h += o.body || '';
+  if (o.tools && o.tools.length) {
+    h += '<div class="aics-hub-tools">';
+    o.tools.forEach(function (t) {
+      h += '<button type="button" class="aics-hub-tool" onclick="aicsHubRun(' + reg(t.fn) + ')">' + aicsHubEsc(t.label) + '</button>';
+    });
+    h += '</div>';
+  }
+  h += o.afterHtml || '';
+  if (o.next && o.next.length) {
+    h += '<div class="aics-hub-title">' + aicsHubEsc(o.nextTitle || 'Continue with this result') + '</div><div class="aics-hub-next-grid">';
+    o.next.forEach(function (n) {
+      h += '<button type="button" class="aics-hub-next" onclick="aicsHubRun(' + reg(n.fn) + ')"><b>' + (n.icon ? aicsHubEsc(n.icon) + ' ' : '') + aicsHubEsc(n.label) + (n.locked ? ' <span class="aics-hub-lock">🔒 Pro</span>' : '') + '</b>' + (n.desc ? '<span>' + aicsHubEsc(n.desc) + '</span>' : '') + '</button>';
+    });
+    h += '</div>';
+  }
+  return h;
+}
+`;
