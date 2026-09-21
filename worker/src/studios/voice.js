@@ -43,6 +43,7 @@ export async function transcribeAudio(env, { audioBase64, mimeType, type, plan, 
     images: [{ mimeType: mimeType || 'audio/mpeg', base64: audioBase64 }],
     apiKey,
   });
+  if (!text || !String(text).trim()) throw new Error('empty_transcription');
   return { text };
 }
 
@@ -112,6 +113,7 @@ export async function generateVoiceSrt(env, { audioBase64, mimeType, type, plan,
     images: [{ mimeType: mimeType || 'audio/mpeg', base64: audioBase64 }],
     apiKey,
   });
+  if (!srt || !String(srt).trim()) throw new Error('empty_transcription');
   return { srt };
 }
 
