@@ -7,11 +7,11 @@ export const HELPERS_SCRIPT = `(function init(){
   var _pb=document.getElementById('planBadge');if(_pb)_pb.textContent=userPlan||'FREE';
   try{var ic=localStorage.getItem('aics_draft_story_imgcache');if(ic){imgCache=JSON.parse(ic)||{};}}catch(e){}
   buildIdeaFields();
-  buildVideoTypeSel();
+  buildWorkflowSel();
   fillSelect('vidDurationSel',DURATIONS,'30 sec');
   fillSelect('vidSceneSel',SCENE_DURATIONS,'8 sec');
   fillSelect('vidRatioSel',RATIOS,'16:9');
-  fillSelect('vidStyleSel',VISUAL_STYLES,'Cinematic Realism');
+  fillSelect('vidStyleSel',VISUAL_STYLES,'Realism');
   fillSelect('vidCamSel',CAMERA_STYLES,'Feature Film');
   fillSelect('vidLangSel',LANGUAGES,'မြန်မာ');
   var _ta=document.getElementById('field_0');
@@ -38,26 +38,21 @@ function fillSelect(id,opts,defVal){
     s.appendChild(o);
   }
 }
-function buildVideoTypeSel(){
-  var selEl=document.getElementById('vidTypeSel');if(!selEl)return;
+// Video Workflow Select — Video Type (1–5) အစား Video Workflow (CINEMATIC_FEATURE …)
+// Story Video သည် Feature-level PRO gate ဖြစ်သောကြောင့် option-level Pro မလို — config သာ
+function buildWorkflowSel(){
+  var selEl=document.getElementById('vidWorkflowSel');if(!selEl)return;
   selEl.innerHTML='';
-  for(var i=0;i<VIDEO_TYPES.length;i++){
+  for(var i=0;i<VIDEO_WORKFLOWS.length;i++){
     (function(t){
       var o=document.createElement('option');
       o.value=t.v;
-      o.textContent=t.label+(t.pro?' (PRO)':'');
-      if(t.pro&&!isPro)o.disabled=true;
+      o.textContent=t.label;
       selEl.appendChild(o);
-    })(VIDEO_TYPES[i]);
+    })(VIDEO_WORKFLOWS[i]);
   }
-  if(!isPro&&selectedVideoType!=='1')selectedVideoType='1';
-  selEl.value=selectedVideoType;
-  selEl.onchange=function(){
-    var v=selEl.value;
-    var meta=VIDEO_TYPES[parseInt(v,10)-1];
-    if(meta&&meta.pro&&!isPro){showToastMsg('ဒီ Type ကို Pro User သာ အသုံးပြုနိုင်ပါသည်။');selEl.value=selectedVideoType;return;}
-    selectedVideoType=v;
-  };
+  selEl.value=selectedWorkflow;
+  selEl.onchange=function(){selectedWorkflow=selEl.value;};
 }
 
 function apiCall(url,body){var s=document.getElementById('aiModelSel');if(s&&s.value)body.model=s.value;return fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(body)}).then(function(res){return res.json().then(function(data){if(!res.ok)throw new Error(data.detail||data.error||'Request failed');return data;});});}

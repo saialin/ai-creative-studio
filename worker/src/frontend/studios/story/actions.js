@@ -27,6 +27,7 @@ function generateStory(){
   apiCall('/api/studio/story/generate',body)
     .then(function(data){
       currentStory=data.story||'';
+      currentStoryFacts=data.storyFacts||{};
       currentStoryIdea=idea;
       if(window.aicsResultLoading)window.aicsResultLoading.hide('storyLoading');
       var sb2=document.getElementById('storyResultBody');if(sb2)sb2.style.display='';
@@ -96,7 +97,9 @@ function focusRevise(){
 }
 
 // ===================== 02 → 03 (User နောက်ဆုံးပြင်ထားသော Story ကို ပို့သည် — Auto Transfer) =====================
+// Story Video = Feature-level PRO gate — "Story Result → Create Video → PRO Check → Story Video"
 function goToVideoForm(){
+  if(!isPro){showToastMsg('Story Video ကို Pro User သာ အသုံးပြုနိုင်ပါသည်။');return;}
   var ta=document.getElementById('storyResult');
   stopTypewriter();
   if(ta)currentStory=ta.value;
@@ -117,6 +120,7 @@ function fillVideoStoryField(){
 
 // ===================== Step 03 → 04 (Video Plan — Unified Result Loading) =====================
 function generateVideoPlan(){
+  if(!isPro){showToastMsg('Story Video ကို Pro User သာ အသုံးပြုနိုင်ပါသည်။');return;}
   if(planBusy)return;
   var story=document.getElementById('videoStoryInput').value.trim();
   if(!story){showError('planError','ဇာတ်လမ်း ထည့်ရန် လိုအပ်ပါသည် — Step 02 မှာ ဇာတ်လမ်းရေးပြီးမှ ဆက်လုပ်ပါ');return;}
@@ -133,12 +137,12 @@ function generateVideoPlan(){
   var consistency=document.getElementById('vidConsistency');
   var body={
     story:story,
-    type:selectedVideoType,
-    videoType:sel('vidTypeSel'),
+    workflow:selectedWorkflow,
+    visualStyle:sel('vidStyleSel'),
+    storyFacts:currentStoryFacts||{},
     duration:sel('vidDurationSel'),
     sceneDuration:sel('vidSceneSel'),
     aspectRatio:sel('vidRatioSel'),
-    visualStyle:sel('vidStyleSel'),
     cameraStyle:sel('vidCamSel'),
     language:sel('vidLangSel'),
     characterContinuity:(continuity&&continuity.checked)?'true':'false',
@@ -340,7 +344,7 @@ function saveAllResult(){
   var defaultTitle=(document.getElementById('field_0').value.trim()||'Story Result').substring(0,40);
   var title=prompt('Creation အမည် ပေးပါ:',defaultTitle);
   if(title===null)return;
-  AICS_CREATIONS.save({studio:'STORY',type:selectedVideoType,title:title||defaultTitle,original_prompt:currentStoryIdea,ai_output:text})
+  AICS_CREATIONS.save({studio:'STORY',type:selectedWorkflow,title:title||defaultTitle,original_prompt:currentStoryIdea,ai_output:text})
     .then(function(){showToastMsg('&#128190; My Creations ထဲ Save ပြီးပါပြီ');})
     .catch(function(err){showToastMsg('Save မအောင်မြင်ပါ: '+(err&&err.message||'Error'));});
 }
@@ -396,7 +400,8 @@ function studioCollectDraft(){
     stepNow:window.studioCur?window.studioCur():1,
     mode:ST_MODE,
     storyType:selectedStoryType,
-    videoType:selectedVideoType,
+    workflow:selectedWorkflow,
+    storyFacts:currentStoryFacts||{},
     aud:(document.getElementById('audSel')?document.getElementById('audSel').value:''),
     tone:document.getElementById('toneSel')?document.getElementById('toneSel').value:'',
     lang:document.getElementById('langSel')?document.getElementById('langSel').value:'',
@@ -406,7 +411,7 @@ function studioCollectDraft(){
     videoStarted:videoStarted,
     videoForm:{
       story:document.getElementById('videoStoryInput')?document.getElementById('videoStoryInput').value:'',
-      videoType:selectedVideoType,
+      workflow:selectedWorkflow,
       duration:sel('vidDurationSel'),
       sceneDuration:sel('vidSceneSel'),
       aspectRatio:sel('vidRatioSel'),
@@ -433,7 +438,8 @@ window.studioCollectDraft=studioCollectDraft;
 function studioRestoreDraft(d){
   if(!d)return;
   selectedStoryType=d.storyType||'1';
-  selectedVideoType=d.videoType||'1';
+  selectedWorkflow=d.workflow||'CINEMATIC_FEATURE';
+  currentStoryFacts=d.storyFacts||{};
   var sts=document.getElementById('storyTypeSel');if(sts)sts.value=selectedStoryType;
   var aud=document.getElementById('audSel');if(aud&&d.aud)aud.value=d.aud;window.aichAud=(aud?aud.value:'လူတိုင်း');
   var tone=document.getElementById('toneSel');if(tone&&d.tone)tone.value=d.tone;
@@ -446,8 +452,8 @@ function studioRestoreDraft(d){
   if(d.videoForm){
     var vf=d.videoForm;
     var vs=document.getElementById('videoStoryInput');if(vs){vs.value=vf.story||currentStory;autoExpand(vs);}
-    var vt=document.getElementById('vidTypeSel');
-    if(vt){vt.value=(!isPro&&vf.videoType&&vf.videoType!=='1')?'1':(vf.videoType||'1');selectedVideoType=vt.value||'1';}
+    var vt=document.getElementById('vidWorkflowSel');
+    if(vt){vt.value=vf.workflow||selectedWorkflow;selectedWorkflow=vt.value||'CINEMATIC_FEATURE';}
     var setf=function(id,v){var e=document.getElementById(id);if(e&&v)e.value=v;};
     setf('vidDurationSel',vf.duration);setf('vidSceneSel',vf.sceneDuration);setf('vidRatioSel',vf.aspectRatio);
     setf('vidStyleSel',vf.visualStyle);setf('vidCamSel',vf.cameraStyle);setf('vidLangSel',vf.language);
