@@ -889,6 +889,8 @@ export default {
 
       // ===== Story Studio — Tab 2: Video Plan (04 Form → 05/06) =====
       // Backward Compat: ယခင် body.idea ကိုလည်း ဆက်လက်လက်ခံသည်။
+      // Story Video = Feature-level PRO gate (§3) — Visual Style + Video Workflow သည်
+      // Story Video အတွင်းရှိ configuration သာ (type-based gate မသုံးတော့ပါ)။
       if (path === '/api/studio/story/video' && request.method === 'POST') {
         const token = bearer(request);
         if (!token) return json({ error: 'unauthorized' }, 401, cors);
@@ -897,8 +899,7 @@ export default {
         const body = await request.json().catch(() => null);
         if (!body || (!body.idea && !body.story)) return json({ error: 'missing_idea' }, 400, cors);
         const plan = await resolvePlan(env, payload);
-        const reqType = String(body.type || '1');
-        { const denied = await requireFeature(env, 'story.video', plan, reqType, cors); if (denied) return denied; }
+        { const denied = await requireFeature(env, 'story.video', plan, '1', cors); if (denied) return denied; }
         try {
           let apiKey = body.apiKey;
           if (!apiKey) apiKey = await getUserApiKey(env, payload.sub);
@@ -906,12 +907,14 @@ export default {
             model: body.model,
             story: body.story || body.idea || '',
             idea: body.idea || body.story || '',
-            type: reqType,
+            type: body.type || '1',
             videoType: body.videoType,
+            workflow: body.workflow,
+            visualStyle: body.visualStyle,
+            storyFacts: body.storyFacts,
             duration: body.duration,
             sceneDuration: body.sceneDuration,
             aspectRatio: body.aspectRatio,
-            visualStyle: body.visualStyle,
             cameraStyle: body.cameraStyle,
             language: body.language,
             environmentStyle: body.environmentStyle,
@@ -936,6 +939,7 @@ export default {
       }
 
       // ===== Story Studio — Tab 2: Video Scene/Character Image =====
+      // Story Video ၏ အစိတ်အပိုင်း — Feature-level PRO gate အတိုင်း လိုက်နာသည်
       if (path === '/api/studio/story/video-image' && request.method === 'POST') {
         const token = bearer(request);
         if (!token) return json({ error: 'unauthorized' }, 401, cors);
@@ -943,6 +947,8 @@ export default {
         if (!payload) return json({ error: 'invalid_token' }, 401, cors);
         const body = await request.json().catch(() => null);
         if (!body || !body.prompt) return json({ error: 'missing_prompt' }, 400, cors);
+        const plan = await resolvePlan(env, payload);
+        { const denied = await requireFeature(env, 'story.video_image', plan, '1', cors); if (denied) return denied; }
         try {
           let apiKey = body.apiKey;
           if (!apiKey) apiKey = await getUserApiKey(env, payload.sub);
